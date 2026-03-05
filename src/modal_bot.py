@@ -65,12 +65,35 @@ def process_message(request_body: dict):
             count = int(count)
             bot.send_message(chat_id, f"Navigating to Google Maps to scrape {count} {service} leads in {city}... This will take a moment 🌐")
             leads = scrape_google_maps(service, city, count)
-            if not leads: return f"I couldn't find any {service} in {city} via Google Maps."
-            saved_count = airtable_save_leads(leads)
+            if not leads:
+                return f"I couldn't find any {service} in {city} via Google Maps."
+
+            # Build a preview from the scraped data
             preview = "\n\n**Top Scraped Leads:**\n"
             for i, lead in enumerate(leads[:3]):
                 preview += f"{i+1}. {lead['name']} ({lead.get('rating', 'N/A')} stars) - {lead.get('address', 'Unknown Address')}\n"
-            return f"Successfully scraped {len(leads)} leads and saved {saved_count} to Airtable!{preview}"
+
+            # Attempt to save — surface any Airtable errors directly to the user
+            try:
+                saved_count = airtable_save_leads(leads)
+                if saved_count == 0:
+                    return (
+                        f"⚠️ Scraped {len(leads)} leads successfully, but saved 0 to Airtable.\n"
+                        f"This usually means no records were created. Check Modal logs for details.{preview}"
+                    )
+                return f"✅ Successfully scraped {len(leads)} leads and saved {saved_count} to Airtable!{preview}"
+            except Exception as airtable_err:
+                error_msg = str(airtable_err)
+                print(f"Airtable save error: {error_msg}")
+                return (
+                    f"⚠️ Scraped {len(leads)} leads, but failed to save to Airtable.\n\n"
+                    f"**Error:** {error_msg}\n\n"
+                    f"Common fixes:\n"
+                    f"• Check that column names in Airtable exactly match: Name, service, address, website, rating, date_created, status\n"
+                    f"• Ensure the token has `data.records:write` permission\n"
+                    f"• Confirm the 'status' Single Select option is exactly 'Lead' (capital L)\n"
+                    f"{preview}"
+                )
 
         def search_existing_leads(city: str = None, service: str = None, min_rating: float = None, status: str = None, limit: int = 5) -> str:
             limit = int(limit) if limit else 5
