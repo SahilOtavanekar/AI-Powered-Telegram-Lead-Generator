@@ -4,7 +4,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat&logo=python&logoColor=white)
 ![Modal](https://img.shields.io/badge/Serverless-Modal-6C47FF?style=flat)
-![Gemini](https://img.shields.io/badge/AI-Gemini%202.0%20Flash-4285F4?style=flat&logo=google&logoColor=white)
+![OpenAI](https://img.shields.io/badge/AI-OpenAI%20GPT--4o-412991?style=flat&logo=openai&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Scraping-Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)
 ![Airtable](https://img.shields.io/badge/Database-Airtable-18BFFF?style=flat&logo=airtable&logoColor=white)
 
@@ -17,7 +17,7 @@
 > *"Find me 10 coffee shops in Thakur Village and save them"*
 > *"Show me plumbers in Kandivali rated above 4 stars"*
 
-The bot uses **Google Gemini 2.0's function-calling API** to understand intent, spins up a **headless Playwright browser** (locally or via Modal) to scrape Google Maps, and saves the results directly to **Airtable** as a structured CRM database.
+The bot uses **OpenAI's function-calling API (GPT-4o)** to understand intent, spins up a **headless Playwright browser** (locally or via Modal) to scrape Google Maps, and saves the results directly to **Airtable** as a structured CRM database.
 
 Built to be **100% Serverless** on Modal, or run locally for rapid development.
 
@@ -27,7 +27,7 @@ Built to be **100% Serverless** on Modal, or run locally for rapid development.
 
 - **Natural Language Interface** — No slash commands to memorize; just chat naturally.
 - **Intelligent Maps Scraping** — Headless Playwright browser extracts names, addresses, websites, and ratings.
-- **AI Intent Routing** — Gemini 2.0 Flash automatically decides whether to scrape new data or query your existing database.
+- **AI Intent Routing** — OpenAI GPT-4o automatically decides whether to scrape new data or query your existing database.
 - **Airtable CRM Integration** — All leads are bulk-uploaded and instantly queryable with filters (city, rating, status).
 - **Cloud Native Execution** — Hosted on Modal with zero idle cost and high performance background tasking.
 - **Async Background Tasks** — Webhooks respond instantly to the user while scraping runs in a dedicated cloud container.
@@ -41,7 +41,7 @@ Built to be **100% Serverless** on Modal, or run locally for rapid development.
 graph TD
     User((User)) -->|Telegram Message| Bot[Telegram Bot]
     Bot -->|Webhook| Modal[Modal FastAPI Endpoint]
-    Modal -->|Spawn Task| Engine[Gemini 2.0 Flash Engine]
+    Modal -->|Spawn Task| Engine[OpenAI GPT-4o Engine]
     
     subgraph "Internal Processing"
     Engine -->|Function Call| Scraper[Playwright Scraper]
@@ -81,7 +81,7 @@ ai-telegram-lead-generator/
 ### 1. Requirements
 - Python 3.11+
 - [Telegram Bot Token](https://t.me/BotFather)
-- [Google Gemini API Key](https://aistudio.google.com/app/apikey)
+- [OpenAI API Key](https://platform.openai.com/api-keys)
 - [Airtable Token & Base ID](https://airtable.com/create/tokens)
 
 ### 2. Installation
@@ -135,7 +135,7 @@ python src/set_webhook.py <YOUR_MODAL_WEBHOOK_URL>
 
 ## ⚙️ Technical Highlights
 
-- **LLM Tool Calling**: Gemini's native `tools=` API eliminates the need for regex parsing — the model handles argument formatting from natural language automatically.
+- **LLM Tool Calling**: OpenAI's native `tools=` API eliminates the need for regex parsing — the model handles argument formatting from natural language automatically.
 - **Async Webhook Architecture**: Solves Telegram's 15-second response limit on Modal by separating the fast webhook endpoint from the long-running scraping task.
 - **Headless Resilience**: Handles EU cookie/consent dialogs, infinite scroll, and direct single-place page redirects from Google Maps via Playwright.
 
