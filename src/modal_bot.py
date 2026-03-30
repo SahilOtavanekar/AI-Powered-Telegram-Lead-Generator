@@ -26,7 +26,7 @@ image = modal.Image.debian_slim().pip_install(
 # --- BACKGROUND PROCESSOR ---
 @app.function(
     image=image, 
-    secrets=[modal.Secret.from_name("telegram-bot-secrets")],
+    secrets=[modal.Secret.from_dotenv()],
     timeout=600 # Allow up to 10 minutes for scraping to complete
 )
 def process_message(request_body: dict):
